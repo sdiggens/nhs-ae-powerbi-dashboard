@@ -1,0 +1,20 @@
+// Four-hour performance: share of Type 1 A&E attendances seen within 4 hours.
+// Calculated as a ratio of sums so large trusts are weighted correctly,
+// and returns blank (not 100%) where there is no data.
+4hr Performance 12m =
+DIVIDE(
+    SUM('AE_12m'[Attendances]) - SUM('AE_12m'[Over 4 Hours]),
+    SUM('AE_12m'[Attendances])
+)
+
+// England figure: removes trust and region filters but keeps the month,
+// so the national line stays fixed whichever trust is selected.
+England 4hr =
+CALCULATE(
+    [4hr Performance 12m],
+    REMOVEFILTERS('AE_12m'[Trust], 'AE_12m'[Trust Code], 'AE_12m'[Region])
+)
+
+// Difference between the selected trust and England, in percentage points.
+Gap vs England =
+[4hr Performance 12m] - [England 4hr]
